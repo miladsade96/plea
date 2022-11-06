@@ -3,7 +3,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 from petition.models import Petition
-from petition.paginations import DefaultPagination
+from petition.paginations import PetitionDefaultPagination
 from petition.permissions import IsOwnerOrIsAdminOrReadOnly
 from petition.serializers import PetitionListCreateSerializer, PetitionRetrieveUpdateDestroySerializer
 
@@ -19,7 +19,7 @@ class PetitionListCreateAPIView(ListCreateAPIView):
     }
     search_fields = ["title", "description", "owner__username"]
     ordering_fields = ["created", "num_signatures"]
-    pagination_class = DefaultPagination
+    pagination_class = PetitionDefaultPagination
 
 
 class PetitionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):

@@ -23,6 +23,7 @@ from drf_yasg import openapi
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("", include("petition.urls")),
 ]
 
 schema_view = get_schema_view(

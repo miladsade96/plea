@@ -5,7 +5,10 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from petition.models import Petition
 from petition.paginations import PetitionDefaultPagination
 from petition.permissions import IsOwnerOrIsAdminOrReadOnly
-from petition.serializers import PetitionListCreateSerializer, PetitionRetrieveUpdateDestroySerializer
+from petition.serializers import (
+    PetitionListCreateSerializer,
+    PetitionRetrieveUpdateDestroySerializer,
+)
 
 
 class PetitionListCreateAPIView(ListCreateAPIView):

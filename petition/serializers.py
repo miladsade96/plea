@@ -6,14 +6,38 @@ from petition.models import Petition
 class PetitionListCreateSerializer(serializers.ModelSerializer):
     summary = serializers.CharField(source="get_summary", read_only=True)
     relative_url = serializers.CharField(source="get_relative_api_url", read_only=True)
-    absolute_url = serializers.SerializerMethodField(method_name="get_absolute_api_url", read_only=True)
+    absolute_url = serializers.SerializerMethodField(
+        method_name="get_absolute_api_url", read_only=True
+    )
 
     class Meta:
         model = Petition
-        fields = ("title", "description", "owner", "image", "slug", "goal",
-                  "num_signatures", "created", "updated", "signatures", "relative_url", "absolute_url", "summary")
-        read_only_fields = ["owner", "slug", "num_signatures", "created",
-                            "updated", "signatures", "relative_url", "absolute_url", "summary"]
+        fields = (
+            "title",
+            "description",
+            "owner",
+            "image",
+            "slug",
+            "goal",
+            "num_signatures",
+            "created",
+            "updated",
+            "signatures",
+            "relative_url",
+            "absolute_url",
+            "summary",
+        )
+        read_only_fields = [
+            "owner",
+            "slug",
+            "num_signatures",
+            "created",
+            "updated",
+            "signatures",
+            "relative_url",
+            "absolute_url",
+            "summary",
+        ]
 
     def get_absolute_api_url(self, obj):
         request = self.context.get("request")
@@ -37,7 +61,22 @@ class PetitionListCreateSerializer(serializers.ModelSerializer):
 class PetitionRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
     class Meta:
         model = Petition
-        fields = ("title", "description", "owner", "image", "slug", "goal",
-                  "num_signatures", "created", "updated", "signatures")
-        read_only_fields = ["owner", "num_signatures", "created", "updated",
-                            "signatures"]
+        fields = (
+            "title",
+            "description",
+            "owner",
+            "image",
+            "slug",
+            "goal",
+            "num_signatures",
+            "created",
+            "updated",
+            "signatures",
+        )
+        read_only_fields = [
+            "owner",
+            "num_signatures",
+            "created",
+            "updated",
+            "signatures",
+        ]

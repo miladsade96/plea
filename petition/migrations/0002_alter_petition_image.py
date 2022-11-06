@@ -7,13 +7,15 @@ import petition.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('petition', '0001_initial'),
+        ("petition", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='petition',
-            name='image',
-            field=models.ImageField(default='default.jpg', upload_to=petition.models.user_directory_path),
+            model_name="petition",
+            name="image",
+            field=models.ImageField(
+                default="default.jpg", upload_to=petition.models.user_directory_path
+            ),
         ),
     ]

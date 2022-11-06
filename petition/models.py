@@ -47,7 +47,9 @@ class Petition(models.Model):
 
 
 class Signature(models.Model):
-    petition = models.ForeignKey(Petition, on_delete=models.CASCADE, related_name="signatures")
+    petition = models.ForeignKey(
+        Petition, on_delete=models.CASCADE, related_name="signatures"
+    )
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
@@ -70,11 +72,15 @@ class Signature(models.Model):
 @receiver(post_save, sender=Signature)
 def update_signatures(sender, instance, **kwargs):
     if instance:
-        Petition.objects.filter(id=instance.petition.id).update(num_signatures=F("num_signatures") + 1)
+        Petition.objects.filter(id=instance.petition.id).update(
+            num_signatures=F("num_signatures") + 1
+        )
 
 
 class Reason(models.Model):
-    petition = models.ForeignKey(Petition, on_delete=models.CASCADE, related_name="reasons")
+    petition = models.ForeignKey(
+        Petition, on_delete=models.CASCADE, related_name="reasons"
+    )
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     why = models.CharField(max_length=300)
@@ -95,6 +101,7 @@ class Vote(models.Model):
     class VoteChoice(models.TextChoices):
         like = "l", _("like")
         dislike = "d", _("dislike")
+
     reason = models.ForeignKey(Reason, on_delete=models.CASCADE, related_name="votes")
     vote = models.CharField(max_length=12, choices=VoteChoice.choices)
     created = models.DateTimeField(auto_now_add=True)

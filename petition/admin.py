@@ -9,8 +9,18 @@ class PetitionAdmin(admin.ModelAdmin):
 
 
 class SignatureAdmin(admin.ModelAdmin):
-    list_display = ("petition", "first_name", "last_name", "email", "country", "city",
-                    "postal_code", "let_me_know", "is_anonymous", "is_verified")
+    list_display = (
+        "petition",
+        "first_name",
+        "last_name",
+        "email",
+        "country",
+        "city",
+        "postal_code",
+        "let_me_know",
+        "is_anonymous",
+        "is_verified",
+    )
     search_fields = ("petition__slug", "email", "country", "city")
     ordering = ("created",)
     list_filter = ("country", "city")

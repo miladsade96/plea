@@ -1,7 +1,19 @@
+import datetime
+import jwt
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
+from jwt import ExpiredSignatureError, InvalidSignatureError
+from mail_templated import EmailMessage
+from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    GenericAPIView,
+)
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from petition.models import Petition, Signature
 from petition.paginations import PetitionDefaultPagination
@@ -10,7 +22,9 @@ from petition.serializers import (
     PetitionListCreateSerializer,
     PetitionRetrieveUpdateDestroySerializer,
     SignatureListCreateSerializer,
+    SignatureVerificationResendSerializer,
 )
+from petition.utilities import EmailThread
 
 
 class PetitionListCreateAPIView(ListCreateAPIView):

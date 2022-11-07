@@ -58,9 +58,98 @@ class SignatureListCreateAPIView(ListCreateAPIView):
     filterset_fields = {
         "petition__slug": ["icontains"],
         "country": ["icontains"],
-        "city": ["icontains"]
+        "city": ["icontains"],
     }
     search_fields = ["petition__slug", "email", "country", "city"]
     ordering_fields = ["created"]
     pagination_class = PetitionDefaultPagination
     lookup_field = ["petition__slug", "country", "city", "email"]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data = {
+                "detail": "Signature created successfully and verification email sent. Please verify your email"
+                "in order to submit your signature on petition."
+            }
+            email = serializer.validated_data["email"]
+            payload = {
+                "first_name": serializer.validated_data["first_name"],
+                "last_name": serializer.validated_data["last_name"],
+                "email": email,
+                "exp": datetime.datetime.now(tz=datetime.timezone.utc)
+                + datetime.timedelta(hours=3),
+            }
+            token = jwt.encode(
+                payload=payload, key=settings.SECRET_KEY, algorithm="HS256"
+            )
+            email = EmailMessage(
+                template_name="email/signature_verification.tpl",
+                from_email="no_reply@plea.org",
+                to=[email],
+                context={
+                    "token": token,
+                    "full_name": f"{payload.get('first_name')} {payload.get('last_name')}",
+                },
+            )
+            EmailThread(email_obj=email).start()
+            return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SignatureVerificationAPIView(APIView):
+    @staticmethod
+    def get(request, token, *args, **kwargs):
+        try:
+            payload = jwt.decode(
+                jwt=token, key=settings.SECRET_KEY, algorithms=["HS256"]
+            )
+            email = payload.get("email")
+        except ExpiredSignatureError:
+            return Response(
+                {"details": "Token has been expired"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except InvalidSignatureError:
+            return Response(
+                {"details": "Token is not valid."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        signature = Signature.objects.get(email=email)
+        if signature.is_verified:
+            return Response(
+                {"detail": "Signature is already verified and submitted on petition."}
+            )
+        signature.is_verified = True
+        signature.save()
+        return Response(
+            {
+                "detail": "Your signature verified and submitted on petition successfully."
+            }
+        )
+
+
+class SignatureVerificationResendAPIView(GenericAPIView):
+    serializer_class = SignatureVerificationResendSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        full_name = serializer.validated_data["full_name"]
+        email = serializer.validated_data["email"]
+        payload = {
+            "full_name": full_name,
+            "email": email,
+            "exp": datetime.datetime.now(tz=datetime.timezone.utc)
+            + datetime.timedelta(hours=3),
+        }
+        token = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm="HS256")
+        data = {"detail": "Signature verification email resend successfully."}
+        email = EmailMessage(
+            template_name="email/signature_verification.tpl",
+            from_email="no_reply@plea.org",
+            to=[email],
+            context={"token": token, "full_name": full_name},
+        )
+        EmailThread(email_obj=email).start()
+        return Response(data, status=status.HTTP_200_OK)

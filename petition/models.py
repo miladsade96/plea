@@ -58,6 +58,7 @@ class Signature(models.Model):
     postal_code = models.CharField(max_length=50)
     let_me_know = models.BooleanField(default=False)
     is_anonymous = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -71,7 +72,7 @@ class Signature(models.Model):
 
 @receiver(post_save, sender=Signature)
 def update_signatures(sender, instance, **kwargs):
-    if instance:
+    if instance.is_verified is True:
         Petition.objects.filter(id=instance.petition.id).update(
             num_signatures=F("num_signatures") + 1
         )

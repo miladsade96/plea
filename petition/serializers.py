@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from petition.models import Petition
+from petition.models import Petition, Signature
 
 
 class PetitionListCreateSerializer(serializers.ModelSerializer):
@@ -80,3 +80,21 @@ class PetitionRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
             "updated",
             "signatures",
         ]
+
+
+class SignatureListCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Signature
+        fields = (
+            "petition",
+            "first_name",
+            "last_name",
+            "email",
+            "country",
+            "city",
+            "postal_code",
+            "let_me_know",
+            "is_anonymous",
+            "is_verified",
+        )
+        read_only_fields = ("is_verified",)

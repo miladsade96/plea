@@ -21,7 +21,7 @@ class PetitionListCreateAPIView(ListCreateAPIView):
         "owner__username": ["exact"],
     }
     search_fields = ["title", "description", "owner__username"]
-    ordering_fields = ["created", "num_signatures"]
+    ordering_fields = ["created", "num_signatures", "goal"]
     pagination_class = PetitionDefaultPagination
 
 

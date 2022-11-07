@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from petition.models import Petition, Signature
 
 
@@ -98,3 +97,33 @@ class SignatureListCreateSerializer(serializers.ModelSerializer):
             "is_verified",
         )
         read_only_fields = ("is_verified",)
+
+
+class SignatureVerificationResendSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        try:
+            signature = Signature.objects.get(email=email)
+        except Signature.DoesNotExist:
+            raise serializers.ValidationError(
+                {"detail": "Signature has not been created with given email."}
+            )
+        if signature.is_verified is True:
+            raise serializers.ValidationError(
+                {
+                    "detail": "Signature is already verified and submitted successfully on the petition."
+                }
+            )
+        attrs["full_name"] = f"{signature.first_name} {signature.last_name}"
+        attrs["email"] = signature.email
+        return super(SignatureVerificationResendSerializer, self).validate(attrs)
+
+    def create(self, validated_data):
+        return super(SignatureVerificationResendSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        return super(SignatureVerificationResendSerializer, self).update(
+            instance, validated_data
+        )

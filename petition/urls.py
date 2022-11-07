@@ -3,6 +3,8 @@ from petition.views import (
     PetitionListCreateAPIView,
     PetitionRetrieveUpdateDestroyAPIView,
     SignatureListCreateAPIView,
+    SignatureVerificationAPIView,
+    SignatureVerificationResendAPIView,
 )
 
 app_name = "petition"
@@ -15,4 +17,14 @@ urlpatterns = [
         name="petition_detail",
     ),
     path("signature/", SignatureListCreateAPIView.as_view(), name="signature_list"),
+    path(
+        "signature/verification/confirm/<str:token>/",
+        SignatureVerificationAPIView.as_view(),
+        name="signature_verification_confirm",
+    ),
+    path(
+        "signature/verification/resend/",
+        SignatureVerificationResendAPIView.as_view(),
+        name="signature_verification_resend",
+    ),
 ]

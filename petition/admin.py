@@ -1,5 +1,5 @@
 from django.contrib import admin
-from petition.models import Petition
+from petition.models import Petition, Signature
 
 
 class PetitionAdmin(admin.ModelAdmin):
@@ -8,4 +8,13 @@ class PetitionAdmin(admin.ModelAdmin):
     ordering = ("-created", "num_signatures", "goal")
 
 
+class SignatureAdmin(admin.ModelAdmin):
+    list_display = ("petition", "first_name", "last_name", "email", "country", "city",
+                    "postal_code", "let_me_know", "is_anonymous", "is_verified")
+    search_fields = ("petition__slug", "email", "country", "city")
+    ordering = ("created",)
+    list_filter = ("country", "city")
+
+
 admin.site.register(Petition, PetitionAdmin)
+admin.site.register(Signature, SignatureAdmin)

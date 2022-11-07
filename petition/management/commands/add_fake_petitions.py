@@ -22,7 +22,7 @@ class Command(BaseCommand):
                 email=email,
                 password="A@123456",
                 first_name=f_name,
-                last_name=l_name
+                last_name=l_name,
             )
             user.save()
 
@@ -31,6 +31,6 @@ class Command(BaseCommand):
                     title=self.fake.paragraph(nb_sentences=1),
                     description=self.fake.paragraph(nb_sentences=100),
                     owner=user,
-                    goal=randint(100, 1000000)
+                    goal=randint(100, 1000000),
                 )
                 petition.save()

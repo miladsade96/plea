@@ -2,6 +2,13 @@ version: "3.9"
 
 services:
 
+  redis:
+    container_name: plea_redis
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
   backend:
     container_name: plea_backend
     build: .
@@ -9,9 +16,20 @@ services:
       - "8000:8000"
     command: python manage.py runserver 0.0.0.0:8000
     restart: always
+    depends_on:
+      - redis
     volumes:
       - .:/app/
 
+  celery_worker:
+    build: .
+    container_name: plea_celery_worker
+    command: sh -c "celery -A plea worker --loglevel=info"
+    depends_on:
+      - redis
+      - backend
+    volumes:
+      - .:/app/
 
   smtp4dev:
     container_name: plea_smtp

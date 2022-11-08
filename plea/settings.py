@@ -157,3 +157,22 @@ EMAIL_HOST = "smtp4dev"
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 25
+
+
+# Celery configurations
+CELERY_BROKER_URL = "redis://plea_redis:6379/1"  # pattern: redis://redis_ip_or_container_name:port/database
+# celery start command inside docker compose --> celery -A core worker -l INFO
+# celery beat start command inside backend service -->
+# celery -A core  beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+
+# Redis caching configurations
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://plea_redis:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}

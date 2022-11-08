@@ -3,7 +3,6 @@ import jwt
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from jwt import ExpiredSignatureError, InvalidSignatureError
-from mail_templated import EmailMessage
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import (
@@ -24,7 +23,7 @@ from petition.serializers import (
     SignatureListCreateSerializer,
     SignatureVerificationResendSerializer,
 )
-from petition.utilities import EmailThread
+from petition.tasks import send_signature_verification_email
 
 
 class PetitionListCreateAPIView(ListCreateAPIView):
@@ -84,16 +83,8 @@ class SignatureListCreateAPIView(ListCreateAPIView):
             token = jwt.encode(
                 payload=payload, key=settings.SECRET_KEY, algorithm="HS256"
             )
-            email = EmailMessage(
-                template_name="email/signature_verification.tpl",
-                from_email="no_reply@plea.org",
-                to=[email],
-                context={
-                    "token": token,
-                    "full_name": f"{payload.get('first_name')} {payload.get('last_name')}",
-                },
-            )
-            EmailThread(email_obj=email).start()
+            full_name = f"{payload.get('first_name')} {payload.get('last_name')}"
+            send_signature_verification_email.delay(token, email, full_name)
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -145,11 +136,5 @@ class SignatureVerificationResendAPIView(GenericAPIView):
         }
         token = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm="HS256")
         data = {"detail": "Signature verification email resend successfully."}
-        email = EmailMessage(
-            template_name="email/signature_verification.tpl",
-            from_email="no_reply@plea.org",
-            to=[email],
-            context={"token": token, "full_name": full_name},
-        )
-        EmailThread(email_obj=email).start()
+        send_signature_verification_email.delay(token, email, full_name)
         return Response(data, status=status.HTTP_200_OK)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from petition.models import Petition, Signature
+from petition.models import Petition, Signature, Reason, Vote
 
 
 class PetitionListCreateSerializer(serializers.ModelSerializer):
@@ -71,6 +71,7 @@ class PetitionRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
             "created",
             "updated",
             "signatures",
+            "reasons"
         )
         read_only_fields = [
             "owner",
@@ -78,6 +79,7 @@ class PetitionRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
             "created",
             "updated",
             "signatures",
+            "reasons"
         ]
 
 
@@ -127,3 +129,17 @@ class SignatureVerificationResendSerializer(serializers.Serializer):
         return super(SignatureVerificationResendSerializer, self).update(
             instance, validated_data
         )
+
+
+class ReasonListCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reason
+        fields = ("petition", "first_name", "last_name", "why", "likes", "dislikes", "created")
+        read_only_fields = ("likes", "dislikes", "created")
+
+
+class VoteCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vote
+        fields = ("reason", "vote", "created")
+        read_only_fields = ("created",)

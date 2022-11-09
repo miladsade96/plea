@@ -71,7 +71,7 @@ class PetitionRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
             "created",
             "updated",
             "signatures",
-            "reasons"
+            "reasons",
         )
         read_only_fields = [
             "owner",
@@ -79,7 +79,7 @@ class PetitionRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
             "created",
             "updated",
             "signatures",
-            "reasons"
+            "reasons",
         ]
 
 
@@ -134,7 +134,15 @@ class SignatureVerificationResendSerializer(serializers.Serializer):
 class ReasonListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reason
-        fields = ("petition", "first_name", "last_name", "why", "likes", "dislikes", "created")
+        fields = (
+            "petition",
+            "first_name",
+            "last_name",
+            "why",
+            "likes",
+            "dislikes",
+            "created",
+        )
         read_only_fields = ("likes", "dislikes", "created")
 
 

@@ -14,14 +14,14 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from petition.models import Petition, Signature
+from petition.models import Petition, Signature, Reason, Vote
 from petition.paginations import PetitionDefaultPagination
 from petition.permissions import IsOwnerOrIsAdminOrReadOnly
 from petition.serializers import (
     PetitionListCreateSerializer,
     PetitionRetrieveUpdateDestroySerializer,
     SignatureListCreateSerializer,
-    SignatureVerificationResendSerializer,
+    SignatureVerificationResendSerializer, ReasonListCreateSerializer, VoteCreateSerializer,
 )
 from petition.tasks import send_signature_verification_email
 
@@ -138,3 +138,17 @@ class SignatureVerificationResendAPIView(GenericAPIView):
         data = {"detail": "Signature verification email resend successfully."}
         send_signature_verification_email.delay(token, email, full_name)
         return Response(data, status=status.HTTP_200_OK)
+
+
+class ReasonListCreateAPIView(ListCreateAPIView):
+    model = Reason
+    queryset = Reason.objects.all()
+    serializer_class = ReasonListCreateSerializer
+    permission_classes = [AllowAny]
+
+
+class VoteListCreateAPIView(ListCreateAPIView):
+    model = Vote
+    queryset = Vote.objects.all()
+    serializer_class = VoteCreateSerializer
+    permission_classes = [AllowAny]

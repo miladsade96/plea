@@ -4,7 +4,9 @@ from petition.views import (
     PetitionRetrieveUpdateDestroyAPIView,
     SignatureListCreateAPIView,
     SignatureVerificationAPIView,
-    SignatureVerificationResendAPIView, ReasonListCreateAPIView, VoteListCreateAPIView,
+    SignatureVerificationResendAPIView,
+    ReasonListCreateAPIView,
+    VoteListCreateAPIView,
 )
 
 app_name = "petition"
@@ -28,5 +30,5 @@ urlpatterns = [
         name="signature_verification_resend",
     ),
     path("reason/", ReasonListCreateAPIView.as_view(), name="reason_list"),
-    path("vote/", VoteListCreateAPIView.as_view(), name="vote")
+    path("vote/", VoteListCreateAPIView.as_view(), name="vote"),
 ]

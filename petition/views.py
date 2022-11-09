@@ -21,7 +21,9 @@ from petition.serializers import (
     PetitionListCreateSerializer,
     PetitionRetrieveUpdateDestroySerializer,
     SignatureListCreateSerializer,
-    SignatureVerificationResendSerializer, ReasonListCreateSerializer, VoteCreateSerializer,
+    SignatureVerificationResendSerializer,
+    ReasonListCreateSerializer,
+    VoteCreateSerializer,
 )
 from petition.tasks import send_signature_verification_email
 

@@ -29,3 +29,51 @@ Tech stack: Django, Django RestFramework, Celery, Celery Beat, Redis, PostgreSQL
 **This project is under active development.**
 
 ---
+
+### Database models schema:
+![Database models schema](db_models_structure.png)
+
+
+---
+
+### Features based on database models:
+**Note: Users do not need to register if they are just wanted to be a signer.**
+* User:
+  * User account registration
+  * User activation using email
+  * Resend user activation email
+  * Change username
+  * Change password
+  * Reset forgotten password
+  * Basic authentication
+  * Session authentication
+  * Token authentication
+  * JWT authentication
+  * Delete account by user
+  * Delete automatically inactive user accounts after one week by background processes
+
+* Petition:
+  * Creating petition by registered user(aka its owner)
+  * Change petition title, description, image, slug and goal by its owner or admin user
+  * Search petition by title, slug, description and owner
+  * Petition goal: the number of signatures if it has been reached, petition will be considered as a successful one
+  * Delete petition by its owner or admin user
+  * Profanity check in petitions after their creation and automatically deletion if there is a profanity by background processes
+
+* Signature:
+  * Creating signature for a petition which is unverified by default
+  * Each signature has a unique email address
+  * Signature verification email
+  * Resend signature verification email
+  * let_me_know: If set to true, the system will email signer if the petition is successful
+  * is_anonymous: if set to true, signer private information such as firstname, lastname and email won't be shown
+  * Signature verification token will be expired after 3 hours
+  * Delete automatically unverified signatures after one week by background processes
+
+* Reason:
+  * Everyone can submit a reason for a petition(Why we need to sign this petition)
+
+* Vote:
+  * Everyone could either like or dislike reasons that are submitted on a petition
+
+---

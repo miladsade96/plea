@@ -15,3 +15,17 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/EverLookNeverSee/plea)
 
 ---
+
+### Project dependencies:
+Tech stack: Django, Django RestFramework, Celery, Celery Beat, Redis, PostgreSQL, Docker  
+[Project dependencies full list](requirements.txt)
+
+---
+
+### Development team:
+* Milad Sadeghi DM - EverLookNeverSee@GitHub
+* [List of contributors](https://github.com/EverLookNeverSee/plea/graphs/contributors)
+
+**This project is under active development.**
+
+---

@@ -30,7 +30,7 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Plea",
         default_version="v1",
-        description="Online Plea Platform API Documentation",
+        description="Online Petition Platform API Documentation",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="Milad.sadeghi.dm@outlook.com"),
         license=openapi.License(name="MIT License"),

@@ -77,3 +77,44 @@ Tech stack: Django, Django RestFramework, Celery, Celery Beat, Redis, PostgreSQL
   * Everyone could either like or dislike reasons that are submitted on a petition
 
 ---
+
+### Local run:
+1. Clone the repository on your local machine:
+```shell
+git clone https://github.com/EverLookNeverSee/plea.git
+```
+2. Navigate to its root directory:
+```shell
+cd plea/
+```
+3. If you have installed redis server before on your local machine, stop it:
+```shell
+sudo /etc/init.d/redis-server stop
+```
+4. Running by docker compose:
+```shell
+docker-compose up --build
+```
+5. Make migrations, migrate and create superuser:
+```shell
+docker container exec -it plea_backend /bin/bash
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+exit
+```
+6. Add some fake data(user and petition) - Optional:
+```shell
+docker container exec -it plea_backend /bin/bash
+python manage.py add_fake_petitions
+exit 
+```
+7. Check out the project:
+   1. API documentation: http://127.0.0.1:8000/swagger
+   2. Smtp server for development: https://127.0.0.1:5000
+   3. Admin panel: http://127.0.0.1:8000/admin
+
+---
+
+### License:
+This project is licensed under [MIT License](LICENSE).

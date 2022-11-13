@@ -4,6 +4,7 @@ from accounts.views import (
     UserRegistrationCreateAPIView,
     UserActivationAPIView,
     ChangeUserPasswordUpdateView,
+    UserActivationResendAPIView,
 )
 
 app_name = "accounts"
@@ -14,6 +15,11 @@ urlpatterns = [
         "activation/confirm/<str:token>/",
         UserActivationAPIView.as_view(),
         name="activation",
+    ),
+    path(
+        "activation/resend/",
+        UserActivationResendAPIView.as_view(),
+        name="activation_resend",
     ),
     path(
         "change-password/",

@@ -39,8 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Apps
     "petition",
+    "accounts",
     # API
     "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "rest_framework.authtoken",
     "drf_yasg",
     "django_filters",
     "mail_templated",

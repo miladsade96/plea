@@ -1,10 +1,9 @@
 from random import randint
-
-from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from faker import Faker
 
 from petition.models import Petition
+from accounts.models import CustomUser
 
 
 class Command(BaseCommand):
@@ -17,12 +16,13 @@ class Command(BaseCommand):
             f_name = self.fake.first_name()
             l_name = self.fake.last_name()
             email = f"{f_name}.{l_name}@mail.com"
-            user = User.objects.create_user(
+            user = CustomUser.objects.create_user(
                 username=f"{f_name}_{l_name}".lower(),
                 email=email,
                 password="A@123456",
                 first_name=f_name,
                 last_name=l_name,
+                is_active=True,
             )
             user.save()
 

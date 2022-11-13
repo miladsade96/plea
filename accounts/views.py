@@ -3,7 +3,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from jwt import ExpiredSignatureError, InvalidSignatureError
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,6 +13,7 @@ from accounts.models import CustomUser
 from accounts.serializers import (
     UserRegistrationSerializer,
     ChangeUserPasswordSerializer,
+    UserActivationResendSerializer,
 )
 from accounts.tasks import send_account_activation_email
 
@@ -76,6 +77,30 @@ class UserActivationAPIView(APIView):
         user.is_active = True
         user.save()
         return Response({"detail": "Your account activated successfully."})
+
+
+class UserActivationResendAPIView(GenericAPIView):
+    serializer_class = UserActivationResendSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.validated_data["email"]
+            user = CustomUser.objects.get(email__iexact=email)
+            full_name = f"{user.first_name} {user.last_name}"
+            data = {"detail": "Activation email resend successfully."}
+            token = self.generate_token_for_user(user)
+            sender = "account_activation@plea.org"
+            send_account_activation_email.delay(token, sender, email, full_name)
+            return Response(data, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def generate_token_for_user(user_obj):
+        refresh = RefreshToken.for_user(
+            user_obj,
+        )
+        return str(refresh.access_token)
 
 
 class ChangeUserPasswordUpdateView(UpdateAPIView):

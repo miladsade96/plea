@@ -3,14 +3,17 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from jwt import ExpiredSignatureError, InvalidSignatureError
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from accounts.models import CustomUser
-from accounts.serializers import UserRegistrationSerializer
+from accounts.serializers import (
+    UserRegistrationSerializer,
+    ChangeUserPasswordSerializer,
+)
 from accounts.tasks import send_account_activation_email
 
 
@@ -73,3 +76,29 @@ class UserActivationAPIView(APIView):
         user.is_active = True
         user.save()
         return Response({"detail": "Your account activated successfully."})
+
+
+class ChangeUserPasswordUpdateView(UpdateAPIView):
+    model = CustomUser
+    serializer_class = ChangeUserPasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def put(self, request, *args, **kwargs):
+        self.user_object = self.get_object()
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            if not self.user_object.check_password(
+                serializer.validated_data["old_password"]
+            ):
+                return Response(
+                    {"detail": "Old password was wrong!"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            self.user_object.set_password(serializer.validated_data["new_password"])
+            self.user_object.save()
+            return Response(
+                {"detail": "Password changed successfully."}, status=status.HTTP_200_OK
+            )

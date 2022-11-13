@@ -1,6 +1,7 @@
 import datetime
 import jwt
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from jwt import ExpiredSignatureError, InvalidSignatureError
 from rest_framework import status
@@ -86,7 +87,8 @@ class SignatureListCreateAPIView(ListCreateAPIView):
                 payload=payload, key=settings.SECRET_KEY, algorithm="HS256"
             )
             full_name = f"{payload.get('first_name')} {payload.get('last_name')}"
-            send_signature_verification_email.delay(token, email, full_name)
+            sender = "signature_verification@plea.org"
+            send_signature_verification_email.delay(token, sender, email, full_name)
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -108,7 +110,7 @@ class SignatureVerificationAPIView(APIView):
             return Response(
                 {"details": "Token is not valid."}, status=status.HTTP_400_BAD_REQUEST
             )
-        signature = Signature.objects.get(email=email)
+        signature = get_object_or_404(Signature, email=email)
         if signature.is_verified:
             return Response(
                 {"detail": "Signature is already verified and submitted on petition."}

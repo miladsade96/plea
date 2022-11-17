@@ -78,3 +78,32 @@ class ChangeUserPasswordSerializer(serializers.Serializer):
         except exceptions.ValidationError as errors:
             raise serializers.ValidationError({"detail": list(errors.messages)})
         return super(ChangeUserPasswordSerializer, self).validate(attrs)
+
+
+class RequestResetForgottenPasswordEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        try:
+            user = CustomUser.objects.get(email__iexact=email)
+        except CustomUser.DoesNotExist:
+            raise serializers.ValidationError({"detail": "Invalid email"})
+        if user.is_active is False:
+            raise serializers.ValidationError(
+                {
+                    "detail": "User account is not active! "
+                    "Please activate your account first."
+                }
+            )
+        attrs["user"] = user
+        attrs["full_name"] = f"{user.first_name} {user.last_name}"
+        return super(RequestResetForgottenPasswordEmailSerializer, self).validate(attrs)
+
+    def create(self, validated_data):
+        return super(RequestResetForgottenPasswordEmailSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        return super(RequestResetForgottenPasswordEmailSerializer, self).update(
+            instance, validated_data
+        )

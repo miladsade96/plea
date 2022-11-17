@@ -129,3 +129,27 @@ class ChangeUserPasswordUpdateView(UpdateAPIView):
             return Response(
                 {"detail": "Password changed successfully."}, status=status.HTTP_200_OK
             )
+
+
+class RequestResetForgottenPasswordEmailAPIView(GenericAPIView):
+    serializer_class = RequestResetForgottenPasswordEmailSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.validated_data["email"]
+            user = serializer.validated_data["user"]
+            full_name = serializer.validated_data["full_name"]
+            data = {"detail": "Password reset link sent successfully."}
+            token = self.generate_token_for_user(user)
+            sender = "reset_apssword@plea.org"
+            send_password_reset_email.delay(token, sender, email, full_name)
+            return Response(data, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def generate_token_for_user(user_obj):
+        refresh = RefreshToken.for_user(
+            user_obj,
+        )
+        return str(refresh.access_token)

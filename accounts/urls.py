@@ -5,6 +5,8 @@ from accounts.views import (
     UserActivationAPIView,
     ChangeUserPasswordUpdateView,
     UserActivationResendAPIView,
+    RequestResetForgottenPasswordEmailAPIView,
+    ResetForgottenPasswordAPIView,
 )
 
 app_name = "accounts"
@@ -25,5 +27,15 @@ urlpatterns = [
         "change-password/",
         ChangeUserPasswordUpdateView.as_view(),
         name="change_user_password",
+    ),
+    path(
+        "reset-password/",
+        RequestResetForgottenPasswordEmailAPIView.as_view(),
+        name="reset_password_request",
+    ),
+    path(
+        "reset-password/confirm/<str:token>/",
+        ResetForgottenPasswordAPIView.as_view(),
+        name="reset_password_confirm",
     ),
 ]

@@ -153,3 +153,32 @@ class RequestResetForgottenPasswordEmailAPIView(GenericAPIView):
             user_obj,
         )
         return str(refresh.access_token)
+
+
+class ResetForgottenPasswordAPIView(UpdateAPIView):
+    model = CustomUser
+    serializer_class = ResetForgottenPasswordSerializer
+    permission_classes = [AllowAny]
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            payload = jwt.decode(
+                jwt=kwargs["token"], key=settings.SECRET_KEY, algorithms=["HS256"]
+            )
+            user_id = payload.get("user_id")
+        except ExpiredSignatureError:
+            return Response(
+                {"details": "Token has been expired"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except InvalidSignatureError:
+            return Response(
+                {"details": "Token is not valid."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        user = get_object_or_404(CustomUser, id=user_id)
+        user.set_password(serializer.validated_data["new_password"])
+        user.save()
+        data = {"detail": "Password reset successfully."}
+        return Response(data, status=status.HTTP_200_OK)

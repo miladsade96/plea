@@ -14,8 +14,10 @@ from accounts.serializers import (
     UserRegistrationSerializer,
     ChangeUserPasswordSerializer,
     UserActivationResendSerializer,
+    RequestResetForgottenPasswordEmailSerializer,
+    ResetForgottenPasswordSerializer,
 )
-from accounts.tasks import send_account_activation_email
+from accounts.tasks import send_account_activation_email, send_password_reset_email
 
 
 class UserRegistrationCreateAPIView(CreateAPIView):

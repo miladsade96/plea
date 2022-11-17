@@ -101,9 +101,35 @@ class RequestResetForgottenPasswordEmailSerializer(serializers.Serializer):
         return super(RequestResetForgottenPasswordEmailSerializer, self).validate(attrs)
 
     def create(self, validated_data):
-        return super(RequestResetForgottenPasswordEmailSerializer, self).create(validated_data)
+        return super(RequestResetForgottenPasswordEmailSerializer, self).create(
+            validated_data
+        )
 
     def update(self, instance, validated_data):
         return super(RequestResetForgottenPasswordEmailSerializer, self).update(
             instance, validated_data
         )
+
+
+class ResetForgottenPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(max_length=100, required=True)
+    new_password_confirm = serializers.CharField(
+        max_length=100, required=True, write_only=True
+    )
+
+    def create(self, validated_data):
+        return super(ResetForgottenPasswordSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        return super(ResetForgottenPasswordSerializer, self).update(
+            instance, validated_data
+        )
+
+    def validate(self, attrs):
+        if attrs.get("new_password") != attrs.get("new_password_confirm"):
+            raise serializers.ValidationError({"detail": "Password does not match!"})
+        try:
+            validate_password(attrs.get("new_password"))
+        except exceptions.ValidationError as errors:
+            raise serializers.ValidationError({"detail": list(errors.messages)})
+        return super(ResetForgottenPasswordSerializer, self).validate(attrs)

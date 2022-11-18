@@ -31,6 +31,16 @@ services:
     volumes:
       - .:/app/
 
+  celery_beat:
+    build: .
+    container_name: plea_celery_beat
+    command: sh -c "celery -A plea  beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    depends_on:
+      - redis
+      - backend
+    volumes:
+      - .:/app/
+
   smtp4dev:
     container_name: plea_smtp
     image: rnwood/smtp4dev:v3

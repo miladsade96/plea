@@ -182,3 +182,12 @@ class ResetForgottenPasswordAPIView(UpdateAPIView):
         user.save()
         data = {"detail": "Password reset successfully."}
         return Response(data, status=status.HTTP_200_OK)
+
+
+class CustomDiscardAuthTokenAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def post(request):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

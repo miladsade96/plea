@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "django_filters",
     "mail_templated",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [

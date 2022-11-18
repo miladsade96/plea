@@ -14,12 +14,14 @@ from accounts.views import (
     RequestResetForgottenPasswordEmailAPIView,
     ResetForgottenPasswordAPIView,
     CustomDiscardAuthTokenAPIView,
+    DeleteUserAccountDestroyAPIView,
 )
 
 app_name = "accounts"
 
 urlpatterns = [
     path("registration/", UserRegistrationCreateAPIView.as_view(), name="registration"),
+    path("delete/", DeleteUserAccountDestroyAPIView.as_view(), name="deletion"),
     path(
         "activation/confirm/<str:token>/",
         UserActivationAPIView.as_view(),

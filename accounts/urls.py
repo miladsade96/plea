@@ -1,4 +1,10 @@
 from django.urls import path
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from accounts.views import (
     UserRegistrationCreateAPIView,
@@ -7,6 +13,7 @@ from accounts.views import (
     UserActivationResendAPIView,
     RequestResetForgottenPasswordEmailAPIView,
     ResetForgottenPasswordAPIView,
+    CustomDiscardAuthTokenAPIView,
 )
 
 app_name = "accounts"
@@ -38,4 +45,11 @@ urlpatterns = [
         ResetForgottenPasswordAPIView.as_view(),
         name="reset_password_confirm",
     ),
+    # Token
+    path("token/login/", ObtainAuthToken.as_view(), name="token_login"),
+    path("token/logout/", CustomDiscardAuthTokenAPIView.as_view(), name="token_logout"),
+    # JWT
+    path("jwt/create/", TokenObtainPairView.as_view(), name="jwt_create"),
+    path("jwt/refresh/", TokenRefreshView.as_view(), name="jwt_refresh"),
+    path("jwt/verify/", TokenVerifyView.as_view(), name="jwt_verify"),
 ]

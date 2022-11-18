@@ -3,7 +3,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from jwt import ExpiredSignatureError, InvalidSignatureError
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, UpdateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, GenericAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -191,3 +191,14 @@ class CustomDiscardAuthTokenAPIView(APIView):
     def post(request):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class DeleteUserAccountDestroyAPIView(DestroyAPIView):
+    queryset = CustomUser.objects.filter(is_active=True)
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.request.user
+        obj.delete()
+        data = {"detail": "User account deleted successfully."}
+        return Response(data, status=status.HTTP_204_NO_CONTENT)

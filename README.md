@@ -57,7 +57,6 @@ Tech stack: Django, Django RestFramework, Celery, Celery Beat, Redis, PostgreSQL
   * Search petition by title, slug, description and owner
   * Petition goal: the number of signatures if it has been reached, petition will be considered as a successful one
   * Delete petition by its owner or admin user
-  * Profanity check in petitions after their creation and automatically deletion if there is a profanity by background processes
 
 * Signature:
   * Creating signature for a petition which is unverified by default

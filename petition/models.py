@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from petition.tasks import send_successful_petition_report
 
 
 User = get_user_model()
@@ -49,11 +50,6 @@ class Petition(models.Model):
         return super(Petition, self).save(*args, **kwargs)
 
 
-@receiver(post_save, sender=Petition)
-def mark_as_successful(sender, instance, **kwargs):
-    if instance.num_signatures == instance.goal:
-        Petition.objects.filter(id=instance.id).update(is_successful=True)
-
 
 class Signature(models.Model):
     petition = models.ForeignKey(
@@ -79,12 +75,6 @@ class Signature(models.Model):
         return f"{self.petition} - {self.first_name} {self.last_name} - {self.email}"
 
 
-@receiver(post_save, sender=Signature)
-def update_signatures(sender, instance, **kwargs):
-    if instance.is_verified is True:
-        Petition.objects.filter(id=instance.petition.id).update(
-            num_signatures=F("num_signatures") + 1
-        )
 
 
 class Reason(models.Model):
@@ -120,6 +110,28 @@ class Vote(models.Model):
         ordering = ("-created",)
         verbose_name = _("Vote")
         verbose_name_plural = _("Votes")
+
+
+
+@receiver(post_save, sender=Petition)
+def mark_as_successful(sender, instance, **kwargs):
+    if instance.num_signatures == instance.goal:
+        Petition.objects.filter(id=instance.id).update(is_successful=True)
+        p_obj = Petition.objects.get(id=instance.id)
+        title = p_obj.title
+        owner = f"{p_obj.owner.first_name} {p_obj.owner.last_name}"
+        recipient_name = p_obj.recipient_name
+        recipient_email = p_obj.recipient_email
+        send_successful_petition_report.delay(title, owner, recipient_name, recipient_email)
+
+
+@receiver(post_save, sender=Signature)
+def update_signatures(sender, instance, **kwargs):
+    if instance.is_verified is True:
+        Petition.objects.filter(id=instance.petition.id).update(
+            num_signatures=F("num_signatures") + 1
+        )
+
 
 
 @receiver(post_save, sender=Vote)

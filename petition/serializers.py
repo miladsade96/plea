@@ -15,9 +15,12 @@ class PetitionListCreateSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "owner",
+            "recipient_name",
+            "recipient_email",
             "image",
             "slug",
             "goal",
+            "is_successful",
             "num_signatures",
             "created",
             "updated",
@@ -36,6 +39,7 @@ class PetitionListCreateSerializer(serializers.ModelSerializer):
             "relative_url",
             "absolute_url",
             "summary",
+            "is_successful",
         ]
 
     def get_absolute_api_url(self, obj):

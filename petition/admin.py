@@ -3,7 +3,7 @@ from petition.models import Petition, Signature, Reason, Vote
 
 
 class PetitionAdmin(admin.ModelAdmin):
-    list_display = ("title", "owner", "num_signatures", "goal")
+    list_display = ("title", "owner", "recipient_name", "recipient_email", "num_signatures", "goal", "is_successful")
     search_fields = ("title", "description", "owner__username")
     ordering = ("-created", "num_signatures", "goal")
 

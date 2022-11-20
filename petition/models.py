@@ -19,11 +19,14 @@ class Petition(models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="petitions")
+    recipient_name = models.CharField(max_length=100, default="Great Admin")
+    recipient_email = models.EmailField(default="admin@admin.com")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to=user_directory_path, default="default.jpg")
     slug = models.SlugField(max_length=50, unique=True, null=False, blank=True)
     goal = models.PositiveIntegerField(blank=False, null=False, default=10)
+    is_successful = models.BooleanField(default=False)
     num_signatures = models.IntegerField(default=0)
 
     class Meta:

@@ -49,6 +49,12 @@ class Petition(models.Model):
         return super(Petition, self).save(*args, **kwargs)
 
 
+@receiver(post_save, sender=Petition)
+def mark_as_successful(sender, instance, **kwargs):
+    if instance.num_signatures == instance.goal:
+        Petition.objects.filter(id=instance.id).update(is_successful=True)
+
+
 class Signature(models.Model):
     petition = models.ForeignKey(
         Petition, on_delete=models.CASCADE, related_name="signatures"

@@ -20,8 +20,8 @@ class Petition(models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="petitions")
-    recipient_name = models.CharField(max_length=100, default="Great Admin")
-    recipient_email = models.EmailField(default="admin@admin.com")
+    recipient_name = models.CharField(max_length=100)
+    recipient_email = models.EmailField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to=user_directory_path, default="default.jpg")
@@ -112,7 +112,6 @@ class Vote(models.Model):
         verbose_name_plural = _("Votes")
 
 
-
 @receiver(post_save, sender=Petition)
 def mark_as_successful(sender, instance, **kwargs):
     if instance.num_signatures == instance.goal:
@@ -131,7 +130,6 @@ def update_signatures(sender, instance, **kwargs):
         Petition.objects.filter(id=instance.petition.id).update(
             num_signatures=F("num_signatures") + 1
         )
-
 
 
 @receiver(post_save, sender=Vote)

@@ -27,10 +27,15 @@ class Command(BaseCommand):
             user.save()
 
             for _ in range(10):
+                f_name = self.fake.first_name()
+                l_name = self.fake.last_name()
+                email = f"{l_name}.{f_name}@gov.com"
                 petition = Petition.objects.create(
                     title=self.fake.paragraph(nb_sentences=1),
                     description=self.fake.paragraph(nb_sentences=100),
                     owner=user,
+                    recipient_name=f"{f_name} {l_name}",
+                    recipient_email=email,
                     goal=randint(100, 1000000),
                 )
                 petition.save()

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('petition', '0004_signature_is_verified'),
+        ("petition", "0004_signature_is_verified"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='petition',
-            name='recipient',
-            field=models.EmailField(default='admin@admin.com', max_length=254),
+            model_name="petition",
+            name="recipient",
+            field=models.EmailField(default="admin@admin.com", max_length=254),
         ),
     ]

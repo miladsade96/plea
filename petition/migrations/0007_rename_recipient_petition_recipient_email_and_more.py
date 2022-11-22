@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('petition', '0006_petition_is_successful'),
+        ("petition", "0006_petition_is_successful"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='petition',
-            old_name='recipient',
-            new_name='recipient_email',
+            model_name="petition",
+            old_name="recipient",
+            new_name="recipient_email",
         ),
         migrations.AddField(
-            model_name='petition',
-            name='recipient_name',
-            field=models.CharField(default='Great Admin', max_length=100),
+            model_name="petition",
+            name="recipient_name",
+            field=models.CharField(default="Great Admin", max_length=100),
         ),
     ]

@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('petition', '0007_rename_recipient_petition_recipient_email_and_more'),
+        ("petition", "0007_rename_recipient_petition_recipient_email_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='petition',
-            name='recipient_email',
+            model_name="petition",
+            name="recipient_email",
             field=models.EmailField(max_length=254),
         ),
         migrations.AlterField(
-            model_name='petition',
-            name='recipient_name',
+            model_name="petition",
+            name="recipient_name",
             field=models.CharField(max_length=100),
         ),
     ]

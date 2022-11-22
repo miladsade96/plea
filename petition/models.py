@@ -50,7 +50,6 @@ class Petition(models.Model):
         return super(Petition, self).save(*args, **kwargs)
 
 
-
 class Signature(models.Model):
     petition = models.ForeignKey(
         Petition, on_delete=models.CASCADE, related_name="signatures"
@@ -73,8 +72,6 @@ class Signature(models.Model):
 
     def __str__(self):
         return f"{self.petition} - {self.first_name} {self.last_name} - {self.email}"
-
-
 
 
 class Reason(models.Model):
@@ -113,15 +110,32 @@ class Vote(models.Model):
 
 
 @receiver(post_save, sender=Petition)
-def mark_as_successful(sender, instance, **kwargs):
+def mark_as_successful_send_data(sender, instance, **kwargs):
     if instance.num_signatures == instance.goal:
         Petition.objects.filter(id=instance.id).update(is_successful=True)
         p_obj = Petition.objects.get(id=instance.id)
-        title = p_obj.title
-        owner = f"{p_obj.owner.first_name} {p_obj.owner.last_name}"
-        recipient_name = p_obj.recipient_name
-        recipient_email = p_obj.recipient_email
-        send_successful_petition_report.delay(title, owner, recipient_name, recipient_email)
+        signatures = p_obj.signatures.all()
+        sgns = [
+            (sgn.first_name, sgn.last_name, sgn.email, sgn.country)
+            for sgn in signatures
+        ]
+        data = {
+            "petition_title": p_obj.title,
+            "petition_description": p_obj.description,
+            "petition_owner_name": f"{p_obj.owner.first_name} {p_obj.owner.last_name}",
+            "petition_owner_email": p_obj.owner.email,
+            "petition_recipient_name": p_obj.recipient_name,
+            "petition_recipient_email": p_obj.recipient_email,
+            "petition_goal": p_obj.goal,
+            "petition_signatures": sgns,
+        }
+        send_successful_petition_report.delay(
+            title=data.get("petition_title"),
+            owner=data.get("petition_owner_name"),
+            recipient_name=data.get("petition_recipient_name"),
+            recipient_email=data.get("petition_recipient_email"),
+            report_file_data=data,
+        )
 
 
 @receiver(post_save, sender=Signature)

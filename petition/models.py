@@ -121,7 +121,6 @@ def mark_as_successful_send_data(sender, instance, **kwargs):
         ]
         data = {
             "petition_title": p_obj.title,
-            "petition_description": p_obj.description,
             "petition_owner_name": f"{p_obj.owner.first_name} {p_obj.owner.last_name}",
             "petition_owner_email": p_obj.owner.email,
             "petition_recipient_name": p_obj.recipient_name,
@@ -129,13 +128,7 @@ def mark_as_successful_send_data(sender, instance, **kwargs):
             "petition_goal": p_obj.goal,
             "petition_signatures": sgns,
         }
-        send_successful_petition_report.delay(
-            title=data.get("petition_title"),
-            owner=data.get("petition_owner_name"),
-            recipient_name=data.get("petition_recipient_name"),
-            recipient_email=data.get("petition_recipient_email"),
-            report_file_data=data,
-        )
+        send_successful_petition_report.delay(data)
 
 
 @receiver(post_save, sender=Signature)

@@ -32,15 +32,17 @@ def csv_generator(data):
 
 
 @shared_task
-def send_successful_petition_report(
-    title, owner, recipient_name, recipient_email, report_file_data
-):
+def send_successful_petition_report(data):
     email = EmailMessage(
         template_name="email/successful_petition_report.tpl",
         from_email="petition_report@plea.org",
-        to=[recipient_email],
-        context={"title": title, "owner": owner, "recipient_name": recipient_name},
+        to=[data.get("petition_recipient_email")],
+        context={
+            "title": data.get("petition_title"),
+            "owner": data.get("petition_owner_name"),
+            "recipient_name": data.get("petition_recipient_name"),
+        },
     )
-    pdf = pdf_generator(report_file_data)
-    email.attach("petition_report.pdf", pdf, "application/pdf")
+    csv_file = csv_generator(data=data.get("petition_signatures"))
+    email.attach("report.csv", csv_file.read(), "text/csv")
     email.send()

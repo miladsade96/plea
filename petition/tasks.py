@@ -41,8 +41,24 @@ def send_successful_petition_report(data):
             "title": data.get("petition_title"),
             "owner": data.get("petition_owner_name"),
             "recipient_name": data.get("petition_recipient_name"),
+            "goal": data.get("petition_goal"),
         },
     )
     csv_file = csv_generator(data=data.get("petition_signatures"))
     email.attach("report.csv", csv_file, "text/csv")
+    email.send()
+
+
+@shared_task
+def send_successful_petition_report_to_signers(data):
+    email = EmailMessage(
+        template_name="email/successful_petition_report_to_signers.tpl",
+        from_email="petition_report@plea.org",
+        to=data.get("let_signers_know"),
+        context={
+            "title": data.get("petition_title"),
+            "owner": data.get("petition_owner_name"),
+            "goal": data.get("petition_goal"),
+        }
+    )
     email.send()

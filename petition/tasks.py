@@ -23,12 +23,12 @@ def send_signature_verification_email(token, sender, receiver, full_name):
 
 def csv_generator(data):
     output_file = io.StringIO()
-    cr = csv.writer(output_file, delimiter=",", qouting=csv.QUOTE_ALL)
+    cr = csv.writer(output_file, delimiter=",")
     cr.writerow(["First_name", "Last_name", "email", "Country"])
     for sgn in data:
-        cr.writerow([sgn[0], sgn[1], sgn[2], sgn[3]])
-    output_file.getvalue()
-    return output_file
+        cr.writerow(sgn)
+    output_file.seek(0)
+    return output_file.getvalue()
 
 
 @shared_task
@@ -44,5 +44,5 @@ def send_successful_petition_report(data):
         },
     )
     csv_file = csv_generator(data=data.get("petition_signatures"))
-    email.attach("report.csv", csv_file.read(), "text/csv")
+    email.attach("report.csv", csv_file, "text/csv")
     email.send()

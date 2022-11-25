@@ -6,7 +6,10 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from petition.tasks import send_successful_petition_report, send_successful_petition_report_to_signers
+from petition.tasks import (
+    send_successful_petition_report,
+    send_successful_petition_report_to_signers,
+)
 
 
 User = get_user_model()

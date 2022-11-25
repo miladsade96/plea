@@ -59,6 +59,6 @@ def send_successful_petition_report_to_signers(data):
             "title": data.get("petition_title"),
             "owner": data.get("petition_owner_name"),
             "goal": data.get("petition_goal"),
-        }
+        },
     )
     email.send()

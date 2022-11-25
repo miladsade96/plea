@@ -6,7 +6,7 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from petition.tasks import send_successful_petition_report
+from petition.tasks import send_successful_petition_report, send_successful_petition_report_to_signers
 
 
 User = get_user_model()
@@ -119,6 +119,8 @@ def mark_as_successful_send_data(sender, instance, **kwargs):
             (sgn.first_name, sgn.last_name, sgn.email, sgn.country)
             for sgn in signatures
         ]
+        signers = p_obj.signatures.filter(let_me_know=True)
+        signers = [sgnr.email for sgnr in signers]
         data = {
             "petition_title": p_obj.title,
             "petition_owner_name": f"{p_obj.owner.first_name} {p_obj.owner.last_name}",
@@ -127,8 +129,10 @@ def mark_as_successful_send_data(sender, instance, **kwargs):
             "petition_recipient_email": p_obj.recipient_email,
             "petition_goal": p_obj.goal,
             "petition_signatures": sgns,
+            "let_signers_know": signers,
         }
         send_successful_petition_report.delay(data)
+        send_successful_petition_report_to_signers.delay(data)
 
 
 @receiver(post_save, sender=Signature)

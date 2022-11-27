@@ -60,6 +60,7 @@ Tech stack: Django, Django RestFramework, Celery, Celery Beat, Redis, PostgreSQL
   * Send email automatically to petition recipient about petition success
   * Send csv file attach to email to petition recipient that contains petition signers information
   * Send email to petition signers (let_me_know=True) about petition success
+  * Using redis cache
 
 * Signature:
   * Creating signature for a petition which is unverified by default
@@ -70,12 +71,15 @@ Tech stack: Django, Django RestFramework, Celery, Celery Beat, Redis, PostgreSQL
   * is_anonymous: if set to true, signer private information such as firstname, lastname and email won't be shown
   * Signature verification token will be expired after 3 hours
   * Delete automatically unverified signatures after one week by background processes
+  * Using redis cache
 
 * Reason:
   * Everyone can submit a reason for a petition(Why we need to sign this petition)
+  * Using redis cache
 
 * Vote:
   * Everyone could either like or dislike reasons that are submitted on a petition
+  * Using redis cache
 
 ---
 

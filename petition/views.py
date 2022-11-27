@@ -15,6 +15,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
 from petition.models import Petition, Signature, Reason, Vote
 from petition.paginations import PetitionDefaultPagination
 from petition.permissions import IsOwnerOrIsAdminOrReadOnly
@@ -42,6 +45,10 @@ class PetitionListCreateAPIView(ListCreateAPIView):
     ordering_fields = ["created", "num_signatures", "goal"]
     pagination_class = PetitionDefaultPagination
 
+    @method_decorator(cache_page(timeout=60*60))
+    def list(self, request, *args, **kwargs):
+        return super(PetitionListCreateAPIView, self).list(request, *args, **kwargs)
+
 
 class PetitionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     model = Petition
@@ -49,6 +56,10 @@ class PetitionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = PetitionRetrieveUpdateDestroySerializer
     permission_classes = [IsOwnerOrIsAdminOrReadOnly]
     lookup_field = "slug"
+
+    @method_decorator(cache_page(timeout=60*60))
+    def get(self, request, *args, **kwargs):
+        return super(PetitionRetrieveUpdateDestroyAPIView, self).get(request, *args, **kwargs)
 
 
 class SignatureListCreateAPIView(ListCreateAPIView):
@@ -66,6 +77,10 @@ class SignatureListCreateAPIView(ListCreateAPIView):
     ordering_fields = ["created"]
     pagination_class = PetitionDefaultPagination
     lookup_field = ["petition__slug", "country", "city", "email"]
+
+    @method_decorator(cache_page(timeout=60*60))
+    def list(self, request, *args, **kwargs):
+        return super(SignatureListCreateAPIView, self).list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -150,9 +165,17 @@ class ReasonListCreateAPIView(ListCreateAPIView):
     serializer_class = ReasonListCreateSerializer
     permission_classes = [AllowAny]
 
+    @method_decorator(cache_page(timeout=60*60))
+    def list(self, request, *args, **kwargs):
+        return super(ReasonListCreateAPIView, self).list(request, *args, **kwargs)
+
 
 class VoteListCreateAPIView(ListCreateAPIView):
     model = Vote
     queryset = Vote.objects.all()
     serializer_class = VoteCreateSerializer
     permission_classes = [AllowAny]
+
+    @method_decorator(cache_page(60*60))
+    def list(self, request, *args, **kwargs):
+        return super(VoteListCreateAPIView, self).list(request, *args, **kwargs)

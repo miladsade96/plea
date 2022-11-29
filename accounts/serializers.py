@@ -3,6 +3,71 @@ from rest_framework import serializers, exceptions
 from accounts.models import CustomUser
 
 
+class PetitionsRelatedField(serializers.RelatedField):
+    def to_internal_value(self, data):
+        return super(PetitionsRelatedField, self).to_internal_value(data)
+
+    def to_representation(self, value):
+        return {
+            "id": value.pk,
+            "title": value.title,
+            "slug": value.slug,
+            "goal": value.goal,
+            "number_of_signatures": value.num_signatures,
+            "relative_url": value.get_relative_api_url(),
+        }
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    user_petitions = PetitionsRelatedField(
+        read_only=True, many=True, source="petitions"
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "is_active",
+            "created_at",
+            "updated_at",
+            "user_petitions",
+        )
+        read_only_fields = (
+            "first_name",
+            "last_name",
+            "email",
+            "is_active",
+            "created_at",
+            "updated_at",
+            "user_petitions",
+        )
+
+    def create(self, validated_data):
+        return super(UserInfoSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        return super(UserInfoSerializer, self).update(instance, validated_data)
+
+    def validate(self, attrs):
+        username = attrs.get("username")
+        try:
+            user = CustomUser.objects.get(username__exact=username)
+        except CustomUser.DoesNotExist:
+            raise serializers.ValidationError({"detail": "Username is invalid!"})
+        if user.is_active is False:
+            raise serializers.ValidationError(
+                {
+                    "detail": "User account is not active! "
+                    "Please activate your account first."
+                }
+            )
+        attrs["user"] = user
+        return super(UserInfoSerializer, self).validate(attrs)
+
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(
         max_length=100, required=True, write_only=True

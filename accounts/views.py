@@ -8,11 +8,16 @@ from rest_framework.generics import (
     UpdateAPIView,
     GenericAPIView,
     DestroyAPIView,
+    RetrieveAPIView,
 )
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.cache import cache_page
 
 from accounts.models import CustomUser
 from accounts.serializers import (
@@ -21,8 +26,23 @@ from accounts.serializers import (
     UserActivationResendSerializer,
     RequestResetForgottenPasswordEmailSerializer,
     ResetForgottenPasswordSerializer,
+    UserInfoSerializer,
 )
 from accounts.tasks import send_account_activation_email, send_password_reset_email
+from accounts.permissions import UserInfoPermission
+
+
+class UserInfoRetrieveAPIView(RetrieveAPIView):
+    model = CustomUser
+    queryset = CustomUser.objects.filter(is_active=True)
+    serializer_class = UserInfoSerializer
+    permission_classes = [UserInfoPermission]
+    lookup_field = "username"
+
+    @method_decorator(cache_page(timeout=60*60))
+    @method_decorator(vary_on_headers("Authorization",))
+    def get(self, request, *args, **kwargs):
+        return super(UserInfoRetrieveAPIView, self).get(request, *args, **kwargs)
 
 
 class UserRegistrationCreateAPIView(CreateAPIView):

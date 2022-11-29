@@ -45,7 +45,7 @@ class PetitionListCreateAPIView(ListCreateAPIView):
     ordering_fields = ["created", "num_signatures", "goal"]
     pagination_class = PetitionDefaultPagination
 
-    @method_decorator(cache_page(timeout=60*60))
+    @method_decorator(cache_page(timeout=60 * 60))
     def list(self, request, *args, **kwargs):
         return super(PetitionListCreateAPIView, self).list(request, *args, **kwargs)
 
@@ -57,9 +57,11 @@ class PetitionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrIsAdminOrReadOnly]
     lookup_field = "slug"
 
-    @method_decorator(cache_page(timeout=60*60))
+    @method_decorator(cache_page(timeout=60 * 60))
     def get(self, request, *args, **kwargs):
-        return super(PetitionRetrieveUpdateDestroyAPIView, self).get(request, *args, **kwargs)
+        return super(PetitionRetrieveUpdateDestroyAPIView, self).get(
+            request, *args, **kwargs
+        )
 
 
 class SignatureListCreateAPIView(ListCreateAPIView):
@@ -78,7 +80,7 @@ class SignatureListCreateAPIView(ListCreateAPIView):
     pagination_class = PetitionDefaultPagination
     lookup_field = ["petition__slug", "country", "city", "email"]
 
-    @method_decorator(cache_page(timeout=60*60))
+    @method_decorator(cache_page(timeout=60 * 60))
     def list(self, request, *args, **kwargs):
         return super(SignatureListCreateAPIView, self).list(request, *args, **kwargs)
 
@@ -165,7 +167,7 @@ class ReasonListCreateAPIView(ListCreateAPIView):
     serializer_class = ReasonListCreateSerializer
     permission_classes = [AllowAny]
 
-    @method_decorator(cache_page(timeout=60*60))
+    @method_decorator(cache_page(timeout=60 * 60))
     def list(self, request, *args, **kwargs):
         return super(ReasonListCreateAPIView, self).list(request, *args, **kwargs)
 
@@ -176,6 +178,6 @@ class VoteListCreateAPIView(ListCreateAPIView):
     serializer_class = VoteCreateSerializer
     permission_classes = [AllowAny]
 
-    @method_decorator(cache_page(60*60))
+    @method_decorator(cache_page(60 * 60))
     def list(self, request, *args, **kwargs):
         return super(VoteListCreateAPIView, self).list(request, *args, **kwargs)

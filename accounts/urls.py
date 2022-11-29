@@ -15,11 +15,13 @@ from accounts.views import (
     ResetForgottenPasswordAPIView,
     CustomDiscardAuthTokenAPIView,
     DeleteUserAccountDestroyAPIView,
+    UserInfoRetrieveAPIView,
 )
 
 app_name = "accounts"
 
 urlpatterns = [
+    path("user/<str:username>/", UserInfoRetrieveAPIView.as_view(), name="user_info"),
     path("registration/", UserRegistrationCreateAPIView.as_view(), name="registration"),
     path("delete/", DeleteUserAccountDestroyAPIView.as_view(), name="deletion"),
     path(

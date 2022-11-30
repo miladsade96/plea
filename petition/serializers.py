@@ -100,28 +100,34 @@ class ReasonsRelatedField(serializers.RelatedField):
 
 
 class PetitionRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
+    petition_signers = SignaturesRelatedField(
+        many=True, read_only=True, source="signatures"
+    )
+    petition_owner = OwnerRelatedField(read_only=True, source="owner")
+    petition_reasons = ReasonsRelatedField(many=True, read_only=True, source="reasons")
+
     class Meta:
         model = Petition
         fields = (
             "title",
             "description",
-            "owner",
+            "petition_owner",
             "image",
             "slug",
             "goal",
             "num_signatures",
             "created",
             "updated",
-            "signatures",
-            "reasons",
+            "petition_signers",
+            "petition_reasons",
         )
         read_only_fields = [
-            "owner",
+            "petition_owner",
             "num_signatures",
             "created",
             "updated",
-            "signatures",
-            "reasons",
+            "petition_signers",
+            "petition_reasons",
         ]
 
 

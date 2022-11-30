@@ -51,6 +51,7 @@ Tech stack: Django, Django RestFramework, Celery, Celery Beat, Redis, PostgreSQL
   * JWT authentication
   * Delete account by user
   * Delete automatically inactive user accounts after one week by background processes
+  * Using private cache for user information
 
 * Petition:
   * Creating petition by registered user(aka its owner)

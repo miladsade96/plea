@@ -61,6 +61,44 @@ class PetitionListCreateSerializer(serializers.ModelSerializer):
         return super(PetitionListCreateSerializer, self).create(validated_data)
 
 
+class SignaturesRelatedField(serializers.RelatedField):
+    def to_internal_value(self, data):
+        return super(SignaturesRelatedField, self).to_internal_value(data)
+
+    def to_representation(self, value):
+        if value.is_anonymous is False:
+            return {
+                "first_name": value.first_name,
+                "last_name": value.last_name,
+            }
+
+
+class OwnerRelatedField(serializers.RelatedField):
+    def to_internal_value(self, data):
+        return super(OwnerRelatedField, self).to_internal_value(data)
+
+    def to_representation(self, value):
+        return {
+            "username": value.username,
+            "first_name": value.first_name,
+            "last_name": value.last_name,
+        }
+
+
+class ReasonsRelatedField(serializers.RelatedField):
+    def to_internal_value(self, data):
+        return super(ReasonsRelatedField, self).to_internal_value(data)
+
+    def to_representation(self, value):
+        return {
+            "why": value.why,
+            "first_name": value.first_name,
+            "last_name": value.last_name,
+            "likes": value.likes,
+            "dislikes": value.dislikes,
+        }
+
+
 class PetitionRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
     class Meta:
         model = Petition

@@ -110,16 +110,22 @@ python manage.py migrate
 python manage.py createsuperuser
 exit
 ```
-6. Add some fake data(user and petition) - Optional:
+6. Manually activate the superuser:
+```text
+Open db.sqlite3 file and replace 0 with 1 in is_active field then save it.
+```
+7. Add some fake data(user and petition) - Optional:
 ```shell
 docker container exec -it plea_backend /bin/bash
 python manage.py add_fake_petitions
 exit 
 ```
-7. Check out the project:
-   1. API documentation: http://127.0.0.1:8000/swagger
-   2. Smtp server for development: https://127.0.0.1:5000
-   3. Admin panel: http://127.0.0.1:8000/admin
+8. Check out the project:
+```text
+1. API documentation: http://127.0.0.1:8000/swagger
+2. Smtp server for development: https://127.0.0.1:5000
+3. Admin panel: http://127.0.0.1:8000/admin
+```
 
 ---
 

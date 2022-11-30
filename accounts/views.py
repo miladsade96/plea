@@ -17,7 +17,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_headers
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, cache_control
 
 from accounts.models import CustomUser
 from accounts.serializers import (
@@ -39,8 +39,13 @@ class UserInfoRetrieveAPIView(RetrieveAPIView):
     permission_classes = [UserInfoPermission]
     lookup_field = "username"
 
-    @method_decorator(cache_page(timeout=60*60))
-    @method_decorator(vary_on_headers("Authorization",))
+    @method_decorator(cache_page(timeout=60 * 60))
+    @method_decorator(cache_control(private=True))
+    @method_decorator(
+        vary_on_headers(
+            "Authorization",
+        )
+    )
     def get(self, request, *args, **kwargs):
         return super(UserInfoRetrieveAPIView, self).get(request, *args, **kwargs)
 

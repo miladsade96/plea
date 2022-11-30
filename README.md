@@ -42,6 +42,7 @@ Tech stack: Django, Django RestFramework, Celery, Celery Beat, Redis, PostgreSQL
   * User account registration
   * User activation using email
   * Resend user activation email
+  * User info page which is accessible for user(not other users) and admin
   * Change password
   * Reset forgotten password
   * Basic authentication
